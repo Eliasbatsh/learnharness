@@ -42,6 +42,9 @@ const path = require("node:path");
 const SIDEBAR_AUTOCLOSE = 928;
 
 const PRODUCT_NAME = "LearnHarness";
+// This personal build is updated manually so upstream installers cannot
+// replace its locally reviewed dependency fixes.
+const UPDATES_ENABLED = false;
 
 // APP NAME → userData (owner, 2026-10-10): the Application Support dir is
 // exactly "LearnHarness" in dev AND packaged. Packaged Electron would
@@ -475,6 +478,10 @@ function installUpdateNow() {
 }
 
 function setupAutoUpdater() {
+	if (!UPDATES_ENABLED) {
+		log("auto-update: disabled in this personal build");
+		return;
+	}
 	if (!app.isPackaged) {
 		log("auto-update: dev build — updater disabled");
 		return;
@@ -532,7 +539,7 @@ function installMenu() {
 				{ role: "about" },
 				// Manual check (Wave C): answers via native dialog — no renderer
 				// round-trip. The 24h automatic checks stay silent.
-				{ label: "Check for Updates…", click: () => checkForUpdates({ manual: true }) },
+				{ label: "Check for Updates…", enabled: UPDATES_ENABLED, click: () => checkForUpdates({ manual: true }) },
 				{ type: "separator" },
 				{ role: "hide" },
 				{ role: "hideOthers" },
